@@ -2,7 +2,7 @@
 import {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import SplashScreen from 'react-native-splash-screen';
-import FontLoader from 'react-native-font-loader';
+//import FontLoader from 'react-native-font-loader';
 import {AppDispatch} from './src/redux/store';
 import {loadInitialStateAsync} from './src/redux/userSlice';
 
@@ -18,11 +18,11 @@ export const AppInitializer = ({children}) => {
     async function prepare() {
       try {
         // Carga de fuentes
-        await FontLoader.loadAsync({
-          regularFont: require('./assets/fonts/Merriweather-Regular.ttf'),
-          lightFont: require('./assets/fonts/Merriweather-Light.ttf'),
-          boldFont: require('./assets/fonts/Merriweather-Bold.ttf'),
-        });
+        //await FontLoader.loadAsync({
+        //  regularFont: require('./assets/fonts/Merriweather-Regular.ttf'),
+        //  lightFont: require('./assets/fonts/Merriweather-Light.ttf'),
+        //  boldFont: require('./assets/fonts/Merriweather-Bold.ttf'),
+        //});
 
         setFontsLoaded(true);
       } catch (e) {

@@ -17,6 +17,8 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.picker.RNCPickerPackage;
 // react-native-geolocation-service
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
+// react-native-gesture-handler
+import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-linear-gradient
 import com.BV.LinearGradient.LinearGradientPackage;
 // react-native-maps
@@ -25,6 +27,8 @@ import com.rnmaps.maps.MapsPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
+// react-native-screens
+import com.swmansion.rnscreens.RNScreensPackage;
 // react-native-splash-screen
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 // react-native-svg
@@ -79,10 +83,12 @@ public class PackageList {
       new AsyncStoragePackage(),
       new RNCPickerPackage(),
       new RNFusedLocationPackage(),
+      new RNGestureHandlerPackage(),
       new LinearGradientPackage(),
       new MapsPackage(),
       new RandomBytesPackage(),
       new SafeAreaContextPackage(),
+      new RNScreensPackage(),
       new SplashScreenReactPackage(),
       new SvgPackage(),
       new VectorIconsPackage()
