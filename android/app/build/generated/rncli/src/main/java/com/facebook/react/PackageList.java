@@ -23,6 +23,8 @@ import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 // react-native-maps
 import com.rnmaps.maps.MapsPackage;
+// react-native-permissions
+import com.zoontek.rnpermissions.RNPermissionsPackage;
 // react-native-randombytes
 import com.bitgo.randombytes.RandomBytesPackage;
 // react-native-safe-area-context
@@ -86,6 +88,7 @@ public class PackageList {
       new RNGestureHandlerPackage(),
       new LinearGradientPackage(),
       new MapsPackage(),
+      new RNPermissionsPackage(),
       new RandomBytesPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
