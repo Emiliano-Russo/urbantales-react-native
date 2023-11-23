@@ -1,6 +1,6 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { IUpdateUserDto, IUser, IUserCreateDto, IUserLoginResponseDto } from "../interfaces/User";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios, {AxiosInstance, AxiosResponse} from 'axios';
+import {IUpdateUserDto, IUser, IUserCreateDto, IUserLoginResponseDto} from '../interfaces/User';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //This users services is made for http request and nothing more...
 export class UserService {
@@ -12,20 +12,21 @@ export class UserService {
   }
 
   public async HelloWorld() {
-    const res = await this.api.get("/");
+    console.log('HelloWorld ', this.baseUrl);
+    const res = await this.api.get('/');
     return res.data;
   }
 
   public async loginUser(email: string, password: string): Promise<IUserLoginResponseDto> {
-    const response = await this.api.post("/auth/local", {
+    const response = await this.api.post('/auth/local', {
       email,
       password,
     });
     return response.data;
   }
 
-  public async registerUser(user: IUserCreateDto): Promise<{ token: string; user: IUser }> {
-    const res = await this.api.post("/user", {
+  public async registerUser(user: IUserCreateDto): Promise<{token: string; user: IUser}> {
+    const res = await this.api.post('/user', {
       name: user.name,
       email: user.email,
       password: user.password,
@@ -35,7 +36,7 @@ export class UserService {
   }
 
   async getUser(id: string) {
-    const jwtToken = await AsyncStorage.getItem("token");
+    const jwtToken = await AsyncStorage.getItem('token');
     const user = await this.api.get(`/user/${id}`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -45,9 +46,9 @@ export class UserService {
   }
 
   public async updateUser(userId: string, userData: IUpdateUserDto): Promise<any> {
-    const jwtToken = await AsyncStorage.getItem("token");
+    const jwtToken = await AsyncStorage.getItem('token');
 
-    console.log("userData", userData);
+    console.log('userData', userData);
     const response = await this.api.patch(
       `/user/${userId}`,
       {
@@ -55,10 +56,10 @@ export class UserService {
       },
       {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${jwtToken}`,
         },
-      }
+      },
     );
     return response.data;
   }
@@ -71,14 +72,14 @@ export class UserService {
   }
 
   public async requestPasswordReset(email: string): Promise<any> {
-    const response = await this.api.post("/user/request-password-reset", {
+    const response = await this.api.post('/user/request-password-reset', {
       email,
     });
     return response.data;
   }
 
   public async resetPassword(token: string, newPassword: string): Promise<any> {
-    const response = await this.api.post("/user/reset-password", {
+    const response = await this.api.post('/user/reset-password', {
       token,
       newPassword,
     });
@@ -86,8 +87,8 @@ export class UserService {
   }
 
   public async deleteAccount() {
-    console.log("deleteAccount");
-    const jwtToken = await AsyncStorage.getItem("token");
+    console.log('deleteAccount');
+    const jwtToken = await AsyncStorage.getItem('token');
     const response = await this.api.delete(`/user`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,

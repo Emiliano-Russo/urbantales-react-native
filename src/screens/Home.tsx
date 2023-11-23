@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
-import { LatLng, Region } from "react-native-maps";
-import Geolocation from "react-native-geolocation-service";
-import { SafeAreaView, View } from "react-native";
-import { ITale } from "../interfaces/Tale";
-import { AppDispatch, RootState } from "../redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { updateMapFilters } from "../redux/userSlice";
-import { API_URL, MAX_ZOOM_LEVEL_FOR_STORIES } from "@env";
-import { MapButtonPlus } from "../components/MapButtonPlus";
-import { ReponseTaleRead, TaleService } from "../services/tale.service";
-import { HomeHeader } from "../components/HomeHeader";
-import { HomeMap } from "../components/HomeMap";
-import { calculateDistance } from "../utils/math";
-import { HomeModalManager } from "../components/HomeModalManager";
+import {useEffect, useState} from 'react';
+import {LatLng, Region} from 'react-native-maps';
+import Geolocation from 'react-native-geolocation-service';
+import {SafeAreaView, View} from 'react-native';
+import {ITale} from '../interfaces/Tale';
+import {AppDispatch, RootState} from '../redux/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateMapFilters} from '../redux/userSlice';
+import {API_URL, MAX_ZOOM_LEVEL_FOR_STORIES} from '@env';
+import {MapButtonPlus} from '../components/MapButtonPlus';
+import {ReponseTaleRead, TaleService} from '../services/tale.service';
+import {HomeHeader} from '../components/HomeHeader';
+import {HomeMap} from '../components/HomeMap';
+import {calculateDistance} from '../utils/math';
+import {HomeModalManager} from '../components/HomeModalManager';
+import {UserService} from '../services/user.service';
 
 const taleService = new TaleService(API_URL);
+const userService = new UserService(API_URL);
 
 export const Home = () => {
   const [region, setRegion] = useState({
@@ -36,35 +38,39 @@ export const Home = () => {
   });
   const [talesRead, setTalesRead] = useState<ReponseTaleRead[]>([]);
 
-  const { user, mapFilters, hasSeenPremiumOffer } = useSelector((state: RootState) => state.user);
+  const {user, mapFilters, hasSeenPremiumOffer} = useSelector((state: RootState) => state.user);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
       // Solicitar permisos y obtener la posición actual
       Geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           setRegion({
             ...region,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
         },
-        (error) => {
+        error => {
           // Manejar posibles errores
           console.error(error);
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
     })();
   }, []);
 
   const onRegionChangeComplete = (region: Region) => {
+    userService
+      .HelloWorld()
+      .then(res => console.log(res))
+      .catch(err => console.log('error fetching hello', err));
     const distance = calculateDistance(
       lastCheckpoint.latitude,
       lastCheckpoint.longitude,
       region.latitude,
-      region.longitude
+      region.longitude,
     );
     if (region.latitudeDelta > MAX_ZOOM_LEVEL_FOR_STORIES) {
       setShowAlertZoom(true);
@@ -73,7 +79,7 @@ export const Home = () => {
       setShowAlertZoom(false);
     }
     if (distance > 10) {
-      setLastCheckpoint({ latitude: region.latitude, longitude: region.longitude });
+      setLastCheckpoint({latitude: region.latitude, longitude: region.longitude});
       // Actualizar coordenadas en el backend
       setShowLoading(true);
       taleService
@@ -84,15 +90,16 @@ export const Home = () => {
           1,
           20,
           mapFilters.category,
-          user && mapFilters.hideRead == true ? { hideRead: mapFilters.hideRead, userId: user.id } : undefined
+          user && mapFilters.hideRead == true ? {hideRead: mapFilters.hideRead, userId: user.id} : undefined,
         )
-        .then((newTalesResponse) => {
-          const existingTalesSet = new Set(tales.map((tale) => tale.id));
-          const newTales = newTalesResponse.items.filter((tale) => !existingTalesSet.has(tale.id));
+        .then(newTalesResponse => {
+          const existingTalesSet = new Set(tales.map(tale => tale.id));
+          const newTales = newTalesResponse.items.filter(tale => !existingTalesSet.has(tale.id));
           setTales([...tales, ...newTales]);
         })
-        .catch((error) => {
-          console.error("error fetching tales");
+        .catch(error => {
+          console.error('error fetching tales');
+          console.log(error.message);
         })
         .finally(() => {
           setShowLoading(false);
@@ -100,7 +107,7 @@ export const Home = () => {
     }
   };
 
-  const handleMapPress = (event) => {
+  const handleMapPress = event => {
     if (selectingLocation) {
       const location = event.nativeEvent.coordinate;
       setSelectedLocation(location); // Almacena la ubicación en el estado
@@ -134,20 +141,20 @@ export const Home = () => {
   };
 
   const applyFilters = async (category: string, hideRead: boolean) => {
-    dispatch(updateMapFilters({ category: category, hideRead: hideRead }));
+    dispatch(updateMapFilters({category: category, hideRead: hideRead}));
     const talesReadResponse = await fetchMyReads();
     setTalesRead(talesReadResponse || []);
-    setTales((prev) => {
+    setTales(prev => {
       let filters = prev;
-      if (category != "Any") filters = prev.filter((tale) => tale.category === category);
+      if (category != 'Any') filters = prev.filter(tale => tale.category === category);
       if (hideRead && talesReadResponse)
-        filters = filters.filter((tale) => talesReadResponse.findIndex((taleRead) => taleRead.id == tale.id) == -1);
+        filters = filters.filter(tale => talesReadResponse.findIndex(taleRead => taleRead.id == tale.id) == -1);
       return filters;
     });
   };
 
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
+    <View style={{backgroundColor: 'white', flex: 1}}>
       <HomeModalManager
         applyFilters={applyFilters}
         hasSeenPremiumOffer={hasSeenPremiumOffer}
@@ -158,12 +165,11 @@ export const Home = () => {
       />
       <View
         style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
+          width: '100%',
+          height: '100%',
+          position: 'relative',
           marginTop: 10,
-        }}
-      >
+        }}>
         <HomeHeader handleOpenFilters={handleOpenFilters} />
         <HomeMap
           handleMapPress={handleMapPress}

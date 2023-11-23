@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ITale, ITaleCreate } from "../interfaces/Tale"; // Define las interfaces según necesites
-import { PaginatedResponse } from "../interfaces/PaginatedReponse";
+import axios, {AxiosInstance} from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ITale, ITaleCreate} from '../interfaces/Tale'; // Define las interfaces según necesites
+import {PaginatedResponse} from '../interfaces/PaginatedReponse';
 
 export interface ReponseTaleRead {
   id: string;
@@ -25,7 +25,7 @@ export class TaleService {
 
   // Asume que tienes métodos para manejar tokens y headers de autenticación como en UserService
   public async getAllTales(): Promise<PaginatedResponse<ITale[]>> {
-    const response = await this.api.get("/tale");
+    const response = await this.api.get('/tale');
     return response.data;
   }
 
@@ -36,10 +36,11 @@ export class TaleService {
     page: number,
     limit: number,
     category: string,
-    taleRead?: { hideRead: boolean; userId: string }
+    taleRead?: {hideRead: boolean; userId: string},
   ): Promise<PaginatedResponse<ITale[]>> {
+    console.log('get all in area with api: ', this.baseUrl);
     let query = `/tale/area?latitude=${latitude}&longitude=${longitude}&diameterKm=${diameterKm}&page=${page}&limit=${limit}`;
-    if (category != "Any") {
+    if (category != 'Any') {
       query = query + `&category=${category}`;
     }
     if (taleRead) {
@@ -50,8 +51,8 @@ export class TaleService {
   }
 
   public async createTale(taleData: ITaleCreate): Promise<ITale> {
-    const jwtToken = await AsyncStorage.getItem("token");
-    console.log("creating tale jwtToken", jwtToken);
+    const jwtToken = await AsyncStorage.getItem('token');
+    console.log('creating tale jwtToken', jwtToken);
 
     const requestBody = {
       title: taleData.title,
@@ -64,10 +65,10 @@ export class TaleService {
       mark: taleData.mark,
     };
 
-    const response = await this.api.post("/tale", requestBody, {
+    const response = await this.api.post('/tale', requestBody, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "application/json", // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
+        'Content-Type': 'application/json', // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
       },
     });
 
@@ -75,8 +76,8 @@ export class TaleService {
   }
 
   public async likeTale(taleId: string): Promise<ITale> {
-    const jwtToken = await AsyncStorage.getItem("token");
-    console.log("liking tale jwtToken", jwtToken);
+    const jwtToken = await AsyncStorage.getItem('token');
+    console.log('liking tale jwtToken', jwtToken);
 
     const response = await this.api.post(
       `/tale/${taleId}/like`,
@@ -84,17 +85,17 @@ export class TaleService {
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json", // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
+          'Content-Type': 'application/json', // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
         },
-      }
+      },
     );
 
     return response.data;
   }
 
   public async dislikeTale(taleId: string): Promise<ITale> {
-    const jwtToken = await AsyncStorage.getItem("token");
-    console.log("disliking tale jwtToken", jwtToken);
+    const jwtToken = await AsyncStorage.getItem('token');
+    console.log('disliking tale jwtToken', jwtToken);
 
     const response = await this.api.post(
       `/tale/${taleId}/dislike`,
@@ -102,17 +103,17 @@ export class TaleService {
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json", // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
+          'Content-Type': 'application/json', // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
         },
-      }
+      },
     );
 
     return response.data;
   }
 
   public async reportTale(taleId: string, reason: string): Promise<ITale> {
-    const jwtToken = await AsyncStorage.getItem("token");
-    console.log("reporting tale jwtToken", jwtToken);
+    const jwtToken = await AsyncStorage.getItem('token');
+    console.log('reporting tale jwtToken', jwtToken);
 
     const response = await this.api.post(
       `/tale/${taleId}/report`,
@@ -122,17 +123,17 @@ export class TaleService {
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json", // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
+          'Content-Type': 'application/json', // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
         },
-      }
+      },
     );
 
     return response.data;
   }
 
   public async markAsRead(taleId: string): Promise<ITale> {
-    const jwtToken = await AsyncStorage.getItem("token");
-    console.log("marking tale as read jwtToken", jwtToken);
+    const jwtToken = await AsyncStorage.getItem('token');
+    console.log('marking tale as read jwtToken', jwtToken);
 
     const response = await this.api.post(
       `/tale/${taleId}/read`,
@@ -140,16 +141,16 @@ export class TaleService {
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json", // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
+          'Content-Type': 'application/json', // Esta línea generalmente no es necesaria ya que axios lo establece automáticamente
         },
-      }
+      },
     );
 
     return response.data;
   }
 
   public async getMyReads(): Promise<ReponseTaleRead[]> {
-    const jwtToken = await AsyncStorage.getItem("token");
+    const jwtToken = await AsyncStorage.getItem('token');
     const response = await this.api.get(`/tale/user-reads`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -159,7 +160,7 @@ export class TaleService {
   }
 
   public async getMyFavorites(): Promise<any> {
-    const jwtToken = await AsyncStorage.getItem("token");
+    const jwtToken = await AsyncStorage.getItem('token');
     const response = await this.api.get(`/tale/user-liked`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -169,7 +170,7 @@ export class TaleService {
   }
 
   public async getMyTales(): Promise<any> {
-    const jwtToken = await AsyncStorage.getItem("token");
+    const jwtToken = await AsyncStorage.getItem('token');
     const response = await this.api.get(`/tale/user-tales`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
